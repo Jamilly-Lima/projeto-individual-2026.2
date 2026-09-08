@@ -72,7 +72,7 @@ public class RestauranteController {
     @GetMapping
     public ResponseEntity<List<Restaurante>> listarRestaurantes() {
 
-        String sql = "SELECT * FROM restaurante ORDER BY avalicao DESC";
+        String sql = "SELECT * FROM restaurante ORDER BY avaliacao DESC";
 
         List<Restaurante> restaurantes =
                 jdbcTemplate.query(sql,
