@@ -1,10 +1,20 @@
-import Restaurante from "./componentes/Restaurante"
+import Restaurantes from "./pages/Restaurantes"
+import { useState } from 'react';
+import Home from './pages/Home';
 
 function App() {
+  const [pagina, setPagina] = useState('home');
+  
   return(
-  <div>
-    <Restaurante/>
-  </div>
+    <div>
+      {pagina === 'home' && (
+        <Home setPagina={setPagina} />
+      )}
+
+      {pagina === 'restaurantes' && (
+        <Restaurantes />
+      )}
+    </div>
   )
 }
 

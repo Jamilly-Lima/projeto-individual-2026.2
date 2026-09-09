@@ -11,6 +11,7 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
 
+@CrossOrigin
 @RestController
 @RequestMapping("/restaurante")
 public class RestauranteController {
