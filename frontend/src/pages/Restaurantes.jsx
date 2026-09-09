@@ -11,8 +11,14 @@ function Restaurantes() {
     const [faixaPreco, setFaixaPreco] = useState('');
     const [avaliacao, setAvaliacao] = useState('');
     const [telefone, setTelefone] = useState('');
+    const [mensagem, setMensagem] = useState('');
 
     function cadastrar() {
+
+        if (nome === '' || tipoCulinaria === '' || endereco === '' || faixaPreco === '' || avaliacao === '' || telefone === '') {
+            setMensagem('Preencha todos os campos antes de cadastrar.');
+            return;
+        }
 
         fetch('http://localhost:8080/restaurante', {
             method: 'POST',
@@ -29,6 +35,11 @@ function Restaurantes() {
             })
         })
             .then(resposta => {
+                if (resposta.status === 409) {
+                    setMensagem('Já existe um restaurante com esse nome ou telefone.');
+                    return null;
+                }
+
                 if (!resposta.ok) {
                     throw new Error(`Erro ${resposta.status}`);
                 }
@@ -36,10 +47,14 @@ function Restaurantes() {
                 return resposta.json();
             })
             .then(dados => {
+                if (dados !== null) {
+                    setMensagem('Restaurante cadastrado com sucesso!');
+                }
                 console.log(dados);
             })
             .catch(erro => {
                 console.log(erro);
+                setMensagem('Não foi possível cadastrar o restaurante.');
             });
     }
 
@@ -56,6 +71,11 @@ function Restaurantes() {
             })
             .then(dados => {
                 setRestaurantes(dados);
+                if (dados.length === 0) {
+                setMensagem('Nenhum restaurante cadastrado ainda.');
+            } else {
+                setMensagem('');
+            }
             })
             .catch(erro => {
                 console.log(erro);
@@ -140,6 +160,9 @@ function Restaurantes() {
                     Cadastrar Restaurante
                 </button>
 
+                {mensagem !== '' && (
+                <p className={styles.mensagem}>{mensagem}</p>
+                )}
             </section>
 
             <section className={styles.lista}>

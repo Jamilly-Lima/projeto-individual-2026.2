@@ -83,3 +83,9 @@
     gap: 20px;
     margin-top: 25px;
 }
+
+.mensagem {
+    margin-top: 15px;
+    color: #a65d3b;
+    font-weight: bold;
+}
