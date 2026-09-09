@@ -13,6 +13,18 @@ function Restaurantes() {
     const [telefone, setTelefone] = useState('');
     const [mensagem, setMensagem] = useState('');
 
+    function formatarTelefone(valor) {
+
+        valor = valor.replace(/\D/g, '');
+
+        if (valor.length <= 11) {
+            valor = valor.replace(/^(\d{2})(\d)/g, '($1) $2');
+            valor = valor.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+
+        return valor;
+    }
+
     function cadastrar() {
 
         if (nome === '' || tipoCulinaria === '' || endereco === '' || faixaPreco === '' || avaliacao === '' || telefone === '') {
@@ -114,10 +126,10 @@ function Restaurantes() {
                 </div>
 
                 <div className={styles.campo}>
-                    <label>Endereço</label>
+                    <label>Bairro</label>
                     <input
                         type="text"
-                        placeholder="Endereço"
+                        placeholder="Ex: Bela Cintra"
                         value={endereco}
                         onChange={(evento) => setEndereco(evento.target.value)}
                     />
@@ -134,23 +146,27 @@ function Restaurantes() {
                 </div>
 
                 <div className={styles.campo}>
-                    <label>Avaliação</label>
-                    <input
-                        type="number"
-                        placeholder="Ex: 4.5"
-                        value={avaliacao}
-                        onChange={(evento) => setAvaliacao(evento.target.value)}
-                    />
+                <label>Avaliação</label>
+                <input
+                    type="number"
+                    placeholder="Ex: 4.5"
+                    min="0"
+                    max="5"
+                    step="0.1"
+                    value={avaliacao}
+                    onChange={(evento) => setAvaliacao(evento.target.value)}
+                />
                 </div>
 
                 <div className={styles.campo}>
                     <label>Telefone</label>
-                    <input
-                        type="text"
-                        placeholder="Telefone"
-                        value={telefone}
-                        onChange={(evento) => setTelefone(evento.target.value)}
-                    />
+                <input
+                    type="text"
+                    placeholder="Telefone"
+                    value={telefone}
+                    onChange={(evento) => setTelefone(formatarTelefone(evento.target.value))}
+                    maxLength="15"
+                />
                 </div>
 
                 <button
