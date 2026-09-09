@@ -34,13 +34,12 @@ public class RestauranteController {
             return ResponseEntity.status(400).build();
         }
 
-        String sqlVerificar = "SELECT COUNT(*) FROM restaurante WHERE LOWER(nome) = LOWER(?) AND LOWER(endereco) = LOWER(?) AND telefone = ?";
+        String sqlVerificar = "SELECT COUNT(*) FROM restaurante WHERE LOWER(nome) = LOWER(?) OR telefone = ?";
 
         Integer quantidade = jdbcTemplate.queryForObject(
                 sqlVerificar,
                 Integer.class,
                 novoRestaurante.getNome(),
-                novoRestaurante.getEndereco(),
                 novoRestaurante.getTelefone()
         );
 
