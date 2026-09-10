@@ -32,6 +32,16 @@ function Restaurantes() {
             return;
         }
 
+        if (avaliacao < 0) {
+            setMensagem('A avaliação não pode ser menor que 0.');
+            return;
+        }
+
+        if (avaliacao > 5) {
+            setMensagem('A avaliação não pode ser maior que 5.');
+            return;
+        }
+
         fetch('http://localhost:8080/restaurante', {
             method: 'POST',
             headers: {
@@ -43,31 +53,38 @@ function Restaurantes() {
                 endereco: endereco,
                 faixaPreco: faixaPreco,
                 avaliacao: avaliacao,
-                telefone: telefone
+                telefone: telefone.replace(/\D/g, '')
             })
         })
-            .then(resposta => {
-                if (resposta.status === 409) {
-                    setMensagem('Já existe um restaurante com esse nome ou telefone.');
-                    return null;
-                }
+        .then(resposta => {
 
-                if (!resposta.ok) {
-                    throw new Error(`Erro ${resposta.status}`);
-                }
+            if (resposta.status === 409) {
+                setMensagem('Já existe um restaurante com esse nome ou telefone.');
+                return null;
+            }
 
-                return resposta.json();
-            })
-            .then(dados => {
-                if (dados !== null) {
-                    setMensagem('Restaurante cadastrado com sucesso!');
-                }
-                console.log(dados);
-            })
-            .catch(erro => {
-                console.log(erro);
-                setMensagem('Não foi possível cadastrar o restaurante.');
-            });
+            if (resposta.status === 400) {
+                setMensagem('Os dados informados são inválidos.');
+                return null;
+            }
+
+            if (!resposta.ok) {
+                throw new Error(`Erro ${resposta.status}`);
+            }
+
+            return resposta.json();
+        })
+        .then(dados => {
+
+            if (dados !== null) {
+                setMensagem('Restaurante cadastrado com sucesso!');
+            }
+
+        })
+        .catch(erro => {
+            console.log(erro);
+            setMensagem('Não foi possível cadastrar o restaurante.');
+        });
     }
 
     function listar() {
@@ -94,6 +111,26 @@ function Restaurantes() {
             });
     }
 
+    function excluir(id) {
+
+        fetch(`http://localhost:8080/restaurante/${id}`, {
+            method: 'DELETE'
+        })
+            .then(resposta => {
+
+                if (!resposta.ok) {
+                    throw new Error(`Erro ${resposta.status}`);
+                }
+
+                setRestaurantes(restaurantes.filter(restaurante => restaurante.id !== id));
+                setMensagem('Restaurante excluído com sucesso!');
+            })
+            .catch(erro => {
+                console.log(erro);
+                setMensagem('Não foi possível excluir o restaurante.');
+            });
+    }   
+
     return (
         <div className={styles.pagina}>
 
@@ -111,8 +148,7 @@ function Restaurantes() {
                         type="text"
                         placeholder="Nome do restaurante"
                         value={nome}
-                        onChange={(evento) => setNome(evento.target.value)}
-                    />
+                        onChange={(evento) => setNome(evento.target.value)}/>
                 </div>
 
                 <div className={styles.campo}>
@@ -121,8 +157,7 @@ function Restaurantes() {
                         type="text"
                         placeholder="Ex: Japonesa"
                         value={tipoCulinaria}
-                        onChange={(evento) => setTipoCulinaria(evento.target.value)}
-                    />
+                        onChange={(evento) => setTipoCulinaria(evento.target.value)}/>
                 </div>
 
                 <div className={styles.campo}>
@@ -131,18 +166,16 @@ function Restaurantes() {
                         type="text"
                         placeholder="Ex: Bela Cintra"
                         value={endereco}
-                        onChange={(evento) => setEndereco(evento.target.value)}
-                    />
+                        onChange={(evento) => setEndereco(evento.target.value)}/>
                 </div>
 
                 <div className={styles.campo}>
                     <label>Faixa de preço</label>
                     <input
                         type="text"
-                        placeholder="Ex: 50,00"
+                        placeholder="Ex: 50-70"
                         value={faixaPreco}
-                        onChange={(evento) => setFaixaPreco(evento.target.value)}
-                    />
+                        onChange={(evento) => setFaixaPreco(evento.target.value)}/>
                 </div>
 
                 <div className={styles.campo}>
@@ -154,8 +187,7 @@ function Restaurantes() {
                     max="5"
                     step="0.1"
                     value={avaliacao}
-                    onChange={(evento) => setAvaliacao(evento.target.value)}
-                />
+                    onChange={(evento) => setAvaliacao(evento.target.value)}/>
                 </div>
 
                 <div className={styles.campo}>
@@ -165,15 +197,11 @@ function Restaurantes() {
                     placeholder="Telefone"
                     value={telefone}
                     onChange={(evento) => setTelefone(formatarTelefone(evento.target.value))}
-                    maxLength="15"
-                />
+                    maxLength="15"/>
                 </div>
 
-                <button
-                    className={styles.botao}
-                    onClick={cadastrar}
-                >
-                    Cadastrar Restaurante
+                <button className={styles.botao} onClick={cadastrar}>
+                Cadastrar Restaurante
                 </button>
 
                 {mensagem !== '' && (
@@ -185,20 +213,14 @@ function Restaurantes() {
 
                 <h2>Restaurantes cadastrados</h2>
 
-                <button
-                    className={styles.botao}
-                    onClick={listar}
-                >
-                    Listar Restaurantes
+                <button className={styles.botao} onClick={listar}>
+                Listar Restaurantes
                 </button>
 
                 <div className={styles.cards}>
 
-                    {restaurantes.map((restaurante) => (
-                        <Restaurante
-                            key={restaurante.id}
-                            restaurante={restaurante}
-                        />
+                {restaurantes.map((restaurante) => (
+                    <Restaurante key={restaurante.id} restaurante={restaurante} excluir={excluir}/>
                     ))}
 
                 </div>
@@ -206,7 +228,7 @@ function Restaurantes() {
             </section>
 
         </div>
-    );
+    )
 }
 
 export default Restaurantes;

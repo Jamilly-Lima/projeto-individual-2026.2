@@ -3,6 +3,7 @@
     padding: 20px;
     border-radius: 10px;
     border: 1px solid #ded5cc;
+    position: relative;
 }
 
 .card h2 {
@@ -13,4 +14,17 @@
 .card p {
     margin-bottom: 8px;
     color: #756b64;
+}
+
+.botaoExcluir {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #8b4a3a;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.botaoExcluir:hover {
+    text-decoration: underline;
 }

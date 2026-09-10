@@ -10,7 +10,7 @@ function Home(props) {
             </p>
 
             <button onClick={() => props.setPagina('restaurantes')}>
-                Explorar restaurantes
+            Explorar restaurantes
             </button>
         </div>
     );
