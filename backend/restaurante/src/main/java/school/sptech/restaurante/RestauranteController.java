@@ -29,7 +29,7 @@ public class RestauranteController {
                 novoRestaurante.getTipoCulinaria() == null || novoRestaurante.getTipoCulinaria().isBlank() ||
                 novoRestaurante.getEndereco() == null || novoRestaurante.getEndereco().isBlank() ||
                 novoRestaurante.getFaixaPreco() == null || novoRestaurante.getFaixaPreco().isBlank() ||
-                novoRestaurante.getAvaliacao() < 0 ||novoRestaurante.getAvaliacao() > 5.0 ||
+                novoRestaurante.getAvaliacao() == null ||novoRestaurante.getAvaliacao() < 0 ||novoRestaurante.getAvaliacao() > 5.0 ||
                 novoRestaurante.getTelefone() == null ||  novoRestaurante.getTelefone().isBlank()) {
             return ResponseEntity.status(400).build();
         }
@@ -81,4 +81,17 @@ public class RestauranteController {
         return ResponseEntity.status(200).body(restaurantes);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> excluirRestaurante(@PathVariable Integer id) {
+
+        String sql = "DELETE FROM restaurante WHERE id = ?";
+
+        int quantidade = jdbcTemplate.update(sql, id);
+
+        if (quantidade == 0) {
+            return ResponseEntity.status(404).build();
+        }
+
+        return ResponseEntity.status(204).build();
+    }
 }
